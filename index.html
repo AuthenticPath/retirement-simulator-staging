@@ -8,7 +8,6 @@
       rel="stylesheet"
     />
     <title>Retirement Strategy Simulator</title>
-    <!-- Link to your external CSS file -->
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -20,6 +19,54 @@
       </h2>
 
       <div class="input-section">
+        <h2>Simulation Mode & Global Settings</h2>
+        <div class="flex-container">
+          <div class="flex-item">
+            <label>Simulation Mode:</label>
+            <input
+              type="radio"
+              id="modeMonteCarlo"
+              name="simulationMode"
+              value="monteCarlo"
+              checked
+            />
+            <label for="modeMonteCarlo" class="radio-label">Monte Carlo</label>
+            <input
+              type="radio"
+              id="modeHistorical"
+              name="simulationMode"
+              value="historical"
+            />
+            <label for="modeHistorical" class="radio-label"
+              >Historical Backtesting</label
+            >
+          </div>
+          <div class="flex-item">
+            <label>Dollar Basis:</label>
+            <input
+              type="radio"
+              id="dollarsNominal"
+              name="dollarBasis"
+              value="nominal"
+              checked
+            />
+            <label for="dollarsNominal" class="radio-label"
+              >Nominal Dollars</label
+            >
+            <input
+              type="radio"
+              id="dollarsReal"
+              name="dollarBasis"
+              value="real"
+            />
+            <label for="dollarsReal" class="radio-label"
+              >Real Dollars (Today's Purchasing Power)</label
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="input-section" id="commonAssumptionsSection">
         <h2>Common Assumptions</h2>
         <div class="flex-container">
           <div class="flex-item">
@@ -28,8 +75,15 @@
           </div>
           <div class="flex-item">
             <label for="initialWithdrawal"
-              >Initial Annual Withdrawal ($):</label
-            >
+              >Initial Annual Withdrawal ($):
+              <span class="tooltip"
+                >?<span class="tooltiptext"
+                  >In Nominal mode, this amount grows with inflation. In Real
+                  mode, this amount is withdrawn each year in today's
+                  dollars.</span
+                ></span
+              >
+            </label>
             <input type="number" id="initialWithdrawal" value="40000" />
           </div>
           <div class="flex-item">
@@ -37,45 +91,90 @@
             <input type="number" id="timeHorizon" value="30" />
           </div>
         </div>
-        <div class="flex-container">
-          <div class="flex-item">
-            <label for="inflationRate">Expected Annual Inflation (%):</label>
-            <input type="number" id="inflationRate" value="2.5" />
+
+        <div id="monteCarloInputs">
+          <!-- Inputs specific to Monte Carlo -->
+          <div class="flex-container">
+            <div class="flex-item">
+              <label for="inflationRate">Expected Annual Inflation (%):</label>
+              <input type="number" id="inflationRate" value="2.5" />
+            </div>
+            <div class="flex-item">
+              <label for="inflationStdDev"
+                >Inflation Std. Deviation (%):
+                <span class="tooltip"
+                  >?<span class="tooltiptext"
+                    >Annualized standard deviation for inflation in Monte Carlo
+                    simulations.</span
+                  ></span
+                >
+              </label>
+              <input type="number" id="inflationStdDev" value="1.5" />
+            </div>
+            <div class="flex-item">
+              <label for="numSimulations"
+                >Number of Monte Carlo Simulations:</label
+              >
+              <input type="number" id="numSimulations" value="1000" />
+            </div>
           </div>
-          <div class="flex-item">
-            <label for="numSimulations"
-              >Number of Monte Carlo Simulations:</label
-            >
-            <input type="number" id="numSimulations" value="1000" />
+          <h3>Asset Class Assumptions (Annualized, Nominal for Monte Carlo)</h3>
+          <div class="flex-container">
+            <div class="flex-item">
+              <label for="stockReturn">Stocks: Expected Return (%):</label>
+              <input type="number" id="stockReturn" value="9.5" />
+              <label for="stockStdDev">Stocks: Standard Deviation (%):</label>
+              <input type="number" id="stockStdDev" value="15.9" />
+            </div>
+            <div class="flex-item">
+              <label for="bondReturn">Bonds: Expected Return (%):</label>
+              <input type="number" id="bondReturn" value="4.8" />
+              <label for="bondStdDev">Bonds: Standard Deviation (%):</label>
+              <input type="number" id="bondStdDev" value="5" />
+            </div>
+            <div class="flex-item">
+              <label for="cashReturn"
+                >Cash/Bucket 1: Expected Return (%):</label
+              >
+              <input type="number" id="cashReturn" value="2" />
+              <label for="cashStdDev"
+                >Cash/Bucket 1: Standard Deviation (%):</label
+              >
+              <input type="number" id="cashStdDev" value="1.9" />
+            </div>
           </div>
         </div>
 
-        <h3>Asset Class Assumptions (Annualized)</h3>
-        <div class="flex-container">
-          <div class="flex-item">
-            <label for="stockReturn">Stocks: Expected Return (%):</label>
-            <input type="number" id="stockReturn" value="9.5" />
-            <label for="stockStdDev">Stocks: Standard Deviation (%):</label>
-            <input type="number" id="stockStdDev" value="15.9" />
-          </div>
-          <div class="flex-item">
-            <label for="bondReturn">Bonds: Expected Return (%):</label>
-            <input type="number" id="bondReturn" value="4.8" />
-            <label for="bondStdDev">Bonds: Standard Deviation (%):</label>
-            <input type="number" id="bondStdDev" value="5" />
-          </div>
-          <div class="flex-item">
-            <label for="cashReturn">Cash/Bucket 1: Expected Return (%):</label>
-            <input type="number" id="cashReturn" value="2" />
-            <label for="cashStdDev"
-              >Cash/Bucket 1: Standard Deviation (%):</label
+        <div id="historicalInputs" style="display: none">
+          <!-- Inputs specific to Historical Backtesting -->
+          <h3>Historical Data Input</h3>
+          <label for="historicalData"
+            >Paste Historical Data (CSV format:
+            Year,StockReturn,BondReturn,CashReturn,Inflation):
+            <span class="tooltip"
+              >?<span class="tooltiptext"
+                >Example Row: 1928,0.4381,0.0136,0.0308, -0.0172 (Returns and
+                Inflation as decimals, e.g., 10% = 0.10)</span
+              ></span
             >
-            <input type="number" id="cashStdDev" value="1.9" />
-          </div>
+          </label>
+          <textarea
+            id="historicalData"
+            rows="10"
+            placeholder="Example:
+1928,0.4381,0.0136,0.0308,-0.0172
+1929,-0.0830,0.0420,0.0316,-0.0059
+1930,-0.2490,0.0689,0.0455,-0.0636"
+          ></textarea>
+          <p class="explanation-text">
+            Data should cover a sufficient period to allow for multiple `Time
+            Horizon`-year rolling periods. Returns and Inflation should be
+            annual nominal rates (e.g., 0.05 for 5%).
+          </p>
         </div>
       </div>
 
-      <div class="input-section">
+      <div class="input-section" id="strategySpecificsSection">
         <h2>Strategy Specifics</h2>
         <div class="flex-container">
           <div class="flex-item">
@@ -175,11 +274,14 @@
 
       <div class="results-section">
         <h2>Simulation Results</h2>
-        <div id="resultsTable">
+        <div id="resultsStatus" style="margin-bottom: 10px">
           <p>Please configure the assumptions and click "Run Simulations".</p>
         </div>
+        <div id="resultsTableContainer">
+          <!-- Table will be generated here by JS -->
+        </div>
         <div id="chartContainer">
-          <h3>Median Annual Portfolio Value</h3>
+          <h3>Median Annual Portfolio Value (Monte Carlo Mode)</h3>
           <svg id="portfolioChart" width="900" height="400">
             <text
               x="50%"
@@ -211,10 +313,6 @@
         <!-- Detailed logs will be populated here -->
       </div>
     </div>
-
-    <!-- Link to your external JavaScript file -->
-    <!-- It's often best to put script tags at the end of the body -->
-    <!-- or use the 'defer' attribute if in the head -->
     <script src="script.js"></script>
   </body>
 </html>

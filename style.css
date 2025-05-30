@@ -58,7 +58,9 @@ label {
 }
 
 input[type="number"],
-input[type="text"] {
+input[type="text"],
+textarea {
+  /* Added textarea */
   width: 120px;
   padding: 10px;
   margin-top: 5px;
@@ -67,6 +69,27 @@ input[type="text"] {
   font-size: 14px;
   background-color: var(--gray-light);
   color: var(--text-dark);
+  box-sizing: border-box; /* Ensures padding doesn't expand width */
+}
+
+textarea {
+  /* Specific textarea styling */
+  width: 100%; /* Make textarea full width of its container */
+  min-height: 100px;
+  font-family: monospace; /* Good for CSV data */
+}
+
+input[type="radio"] {
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+label.radio-label {
+  /* Style for labels next to radio buttons */
+  display: inline-block;
+  margin-top: 0;
+  margin-right: 15px;
+  font-weight: normal;
 }
 
 button {
@@ -98,6 +121,7 @@ button:hover {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  align-items: flex-start; /* Align items to the top */
 }
 
 .flex-item {
@@ -123,7 +147,7 @@ button:hover {
   z-index: 1;
   bottom: 125%;
   left: 50%;
-  margin-left: -125px;
+  margin-left: -125px; /* Half of width */
   opacity: 0;
   transition: opacity 0.3s ease;
   font-size: 0.85em;
