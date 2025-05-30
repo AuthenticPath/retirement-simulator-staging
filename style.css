@@ -1,0 +1,248 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+
+:root {
+  --primary: #f58634;
+  --primary-dark: #d46d1e;
+  --secondary: #10b981;
+  --gray-light: #f9fafb;
+  --gray-border: #e5e7eb;
+  --text-dark: #1f2937;
+  --text-medium: #374151;
+  --text-light: #4b5563;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  margin: 20px;
+  background-color: var(--gray-light);
+  color: var(--text-dark);
+  line-height: 1.7;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 0.2em;
+  color: var(--text-dark);
+}
+
+h2,
+h3,
+h4 {
+  color: var(--text-dark);
+  border-bottom: 2px solid var(--gray-border);
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+}
+
+.input-section,
+.results-section,
+.detailed-log-section {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--gray-border);
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  color: var(--text-medium);
+}
+
+input[type="number"],
+input[type="text"] {
+  width: 120px;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: var(--gray-light);
+  color: var(--text-dark);
+}
+
+button {
+  background-color: var(--primary);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--primary-dark);
+}
+
+.download-button {
+  background-color: var(--secondary);
+  margin-left: 10px;
+}
+
+.download-button:hover {
+  background-color: #059669;
+}
+
+.flex-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.flex-item {
+  flex: 1;
+  min-width: 280px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 250px;
+  background-color: var(--text-medium);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -125px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 0.85em;
+  font-weight: normal;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 0.9em;
+}
+
+th,
+td {
+  border: 1px solid var(--gray-border);
+  padding: 8px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: var(--text-medium);
+}
+
+td {
+  background-color: #ffffff;
+}
+
+.results-header {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+#chartContainer {
+  margin-top: 30px;
+}
+
+#portfolioChart {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+.chart-legend {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.legend-item {
+  display: inline-block;
+  margin-right: 20px;
+  font-size: 0.9em;
+  color: var(--text-medium);
+}
+
+.legend-color {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  vertical-align: middle;
+  border: 1px solid #777;
+  border-radius: 3px;
+}
+
+.explanation-text {
+  font-size: 0.95em;
+  color: var(--text-light);
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+.detailed-log-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto;
+  margin-top: 10px;
+  border: 1px solid var(--gray-border);
+  border-radius: 6px;
+}
+
+.collapsible {
+  background-color: #f3f4f6;
+  color: var(--text-dark);
+  cursor: pointer;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  font-size: 1em;
+  font-weight: 600;
+  border-radius: 6px;
+  margin-top: 15px;
+  transition: background-color 0.2s ease;
+}
+
+.collapsible:hover,
+.collapsible.active {
+  background-color: #e5e7eb;
+}
+
+.collapsible-content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid var(--gray-border);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}

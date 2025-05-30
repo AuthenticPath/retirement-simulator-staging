@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>Retirement Strategy Simulator</title>
+    <!-- Link to your external CSS file -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Retirement Strategy Simulator</h1>
+      <h2>
+        Comparing the Three-Bucket Strategy to the Traditional "Total Return"
+        Approach
+      </h2>
+
+      <div class="input-section">
+        <h2>Common Assumptions</h2>
+        <div class="flex-container">
+          <div class="flex-item">
+            <label for="startBalance">Starting Portfolio Balance ($):</label>
+            <input type="number" id="startBalance" value="1000000" />
+          </div>
+          <div class="flex-item">
+            <label for="initialWithdrawal"
+              >Initial Annual Withdrawal ($):</label
+            >
+            <input type="number" id="initialWithdrawal" value="40000" />
+          </div>
+          <div class="flex-item">
+            <label for="timeHorizon">Time Horizon (Years):</label>
+            <input type="number" id="timeHorizon" value="30" />
+          </div>
+        </div>
+        <div class="flex-container">
+          <div class="flex-item">
+            <label for="inflationRate">Expected Annual Inflation (%):</label>
+            <input type="number" id="inflationRate" value="2.5" />
+          </div>
+          <div class="flex-item">
+            <label for="numSimulations"
+              >Number of Monte Carlo Simulations:</label
+            >
+            <input type="number" id="numSimulations" value="1000" />
+          </div>
+        </div>
+
+        <h3>Asset Class Assumptions (Annualized)</h3>
+        <div class="flex-container">
+          <div class="flex-item">
+            <label for="stockReturn">Stocks: Expected Return (%):</label>
+            <input type="number" id="stockReturn" value="9.5" />
+            <label for="stockStdDev">Stocks: Standard Deviation (%):</label>
+            <input type="number" id="stockStdDev" value="15.9" />
+          </div>
+          <div class="flex-item">
+            <label for="bondReturn">Bonds: Expected Return (%):</label>
+            <input type="number" id="bondReturn" value="4.8" />
+            <label for="bondStdDev">Bonds: Standard Deviation (%):</label>
+            <input type="number" id="bondStdDev" value="5" />
+          </div>
+          <div class="flex-item">
+            <label for="cashReturn">Cash/Bucket 1: Expected Return (%):</label>
+            <input type="number" id="cashReturn" value="2" />
+            <label for="cashStdDev"
+              >Cash/Bucket 1: Standard Deviation (%):</label
+            >
+            <input type="number" id="cashStdDev" value="1.9" />
+          </div>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <h2>Strategy Specifics</h2>
+        <div class="flex-container">
+          <div class="flex-item">
+            <h3>Three-Bucket Strategy</h3>
+            <p class="explanation-text">
+              <strong>How the Bucket Strategy Refill Rules Work:</strong
+              ><br /><br />
+              1. <strong>Each year starts with a withdrawal.</strong><br />
+              You take out your annual spending money first. After that, the
+              buckets grow or shrink depending on how the market performs. The
+              stock bucket’s (B3) return for the year is used to decide how to
+              refill the buckets.<br /><br />
+
+              2. <strong>If stocks went up or stayed flat:</strong><br />
+              You <em>rebalance the whole portfolio</em>:<br />
+              – Fill <strong>Bucket 1 (Cash)</strong> to cover your target
+              number of years (e.g., 2 years of expenses).<br />
+              – Then fill <strong>Bucket 2 (Bonds)</strong> to its target (e.g.,
+              5 years of expenses).<br />
+              – Put the rest into
+              <strong>Bucket 3 (Stocks)</strong>.<br /><br />
+
+              3. <strong>If stocks went down:</strong><br />
+              You <em>avoid touching stocks</em>:<br />
+              – First, check if <strong>Bucket 1</strong> is below its minimum
+              threshold. If it is, refill it using
+              <strong>only Bucket 2</strong>.<br />
+              – Don’t sell stocks to do this.<br />
+              – After refilling Bucket 1, if <strong>Bucket 2</strong> has more
+              than its target, move the extra into
+              <strong>Bucket 3</strong>.<br />
+              – Again, <strong>never sell from Bucket 3</strong> when stocks are
+              down.<br /><br />
+
+              4. <strong>If bonds run out during a long downturn:</strong><br />
+              – You may not be able to fully refill cash.<br />
+              – If both <strong>Bucket 1 (Cash)</strong> and
+              <strong>Bucket 2 (Bonds)</strong> are empty, you’ll have to start
+              withdrawing directly from <strong>Bucket 3 (Stocks)</strong>.
+            </p>
+
+            <label for="bucket1Years"
+              >Bucket 1: Target Years of Expenses in Cash
+              <span class="tooltip"
+                >?<span class="tooltiptext"
+                  >How many years of current living expenses to keep in Bucket 1
+                  (cash/equivalents). This is its target size.</span
+                ></span
+              >
+            </label>
+            <input type="number" id="bucket1Years" value="2" />
+
+            <label for="bucket1RefillThreshold"
+              >Bucket 1: Refill Threshold (Years)
+              <span class="tooltip"
+                >?<span class="tooltiptext"
+                  >If B3 market is down, B1 is refilled (from B2 only) if it's
+                  below this many years of current expenses. If B3 market is up,
+                  B1 is set to target regardless of threshold.</span
+                ></span
+              >
+            </label>
+            <input type="number" id="bucket1RefillThreshold" value="1" />
+
+            <label for="bucket2YearsBonds"
+              >Bucket 2: Target Years of Expenses in Bonds
+              <span class="tooltip"
+                >?<span class="tooltiptext"
+                  >Defines the target size for Bucket 2 (Bonds) in terms of
+                  current annual expenses. See rebalancing rules above.</span
+                ></span
+              >
+            </label>
+            <input type="number" id="bucket2YearsBonds" value="5" />
+          </div>
+
+          <div class="flex-item">
+            <h3>Total Return Strategy</h3>
+            <label for="trStockAllocation"
+              >Stock Allocation (%):
+              <span class="tooltip"
+                >?<span class="tooltiptext"
+                  >Percentage of the total portfolio allocated to stocks. Bonds
+                  get the rest. Rebalanced annually.</span
+                ></span
+              >
+            </label>
+            <input type="number" id="trStockAllocation" value="60" />
+            <p class="explanation-text">
+              (Bond allocation is 100% - Stock Allocation %)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="runSimulations()">Run Simulations</button>
+
+      <div class="results-section">
+        <h2>Simulation Results</h2>
+        <div id="resultsTable">
+          <p>Please configure the assumptions and click "Run Simulations".</p>
+        </div>
+        <div id="chartContainer">
+          <h3>Median Annual Portfolio Value</h3>
+          <svg id="portfolioChart" width="900" height="400">
+            <text
+              x="50%"
+              y="50%"
+              dominant-baseline="middle"
+              text-anchor="middle"
+            >
+              Chart will appear here after simulation.
+            </text>
+          </svg>
+          <div class="chart-legend">
+            <span class="legend-item"
+              ><span class="legend-color" style="background-color: blue"></span>
+              Three-Bucket Strategy</span
+            >
+            <span class="legend-item"
+              ><span class="legend-color" style="background-color: red"></span>
+              Total Return Strategy</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="detailed-log-section"
+        id="detailedLogOutput"
+        style="display: none"
+      >
+        <!-- Detailed logs will be populated here -->
+      </div>
+    </div>
+
+    <!-- Link to your external JavaScript file -->
+    <!-- It's often best to put script tags at the end of the body -->
+    <!-- or use the 'defer' attribute if in the head -->
+    <script src="script.js"></script>
+  </body>
+</html>
