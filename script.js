@@ -318,7 +318,11 @@ function simulateThreeBucketStrategy_Engine(
     }
 
     // --- Growth Phase (uses Real/Nominal logic from applyYearlyEvents) ---
-    let portfolioForGrowth = { b1Balance, b2Balance, b3Balance };
+    let portfolioForGrowth = {
+      b1Balance: bucket1Balance,
+      b2Balance: bucket2Balance,
+      b3Balance: bucket3Balance,
+    };
     const { yearStockReturn, yearBondReturn, yearCashReturn } =
       applyYearlyEvents(
         portfolioForGrowth,
