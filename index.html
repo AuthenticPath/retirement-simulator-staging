@@ -147,26 +147,53 @@
 
         <div id="historicalInputs" style="display: none">
           <!-- Inputs specific to Historical Backtesting -->
-          <h3>Historical Data Input</h3>
-          <label for="historicalData"
-            >Paste Historical Data (CSV format:
-            Year,StockReturn,BondReturn,CashReturn,Inflation):
-            <span class="tooltip"
-              >?<span class="tooltiptext"
-                >Example Row: 1928,0.4381,0.0136,0.0308, -0.0172 (Returns and
-                Inflation as decimals, e.g., 10% = 0.10)</span
-              ></span
+          <h3>Historical Data Source</h3>
+          <div>
+            <input
+              type="radio"
+              id="historicalSourceBuiltIn"
+              name="historicalDataSource"
+              value="builtIn"
+              checked
+            />
+            <label for="historicalSourceBuiltIn" class="radio-label"
+              >Use Built-in Dataset (1928-2024)</label
             >
-          </label>
-          <textarea
-            id="historicalData"
-            rows="10"
-            placeholder="Example:
+            <input
+              type="radio"
+              id="historicalSourceCustom"
+              name="historicalDataSource"
+              value="custom"
+            />
+            <label for="historicalSourceCustom" class="radio-label"
+              >Paste Custom Dataset</label
+            >
+          </div>
+
+          <div
+            id="customHistoricalDataSection"
+            style="display: none; margin-top: 15px"
+          >
+            <label for="historicalData"
+              >Paste Custom Historical Data (CSV format:
+              Year,StockReturn,BondReturn,CashReturn,Inflation):
+              <span class="tooltip"
+                >?<span class="tooltiptext"
+                  >Example Row: 1928,0.4381,0.0136,0.0308,-0.0172 (Returns and
+                  Inflation as decimals, e.g., 10% = 0.10)</span
+                ></span
+              >
+            </label>
+            <textarea
+              id="historicalData"
+              rows="10"
+              placeholder="Example:
 1928,0.4381,0.0136,0.0308,-0.0172
 1929,-0.0830,0.0420,0.0316,-0.0059
-1930,-0.2490,0.0689,0.0455,-0.0636"
-          ></textarea>
-          <p class="explanation-text">
+1930,-0.2512,0.0689,0.0455,-0.0636"
+            ></textarea>
+          </div>
+          <p class="explanation-text" style="margin-top: 10px">
             Data should cover a sufficient period to allow for multiple `Time
             Horizon`-year rolling periods. Returns and Inflation should be
             annual nominal rates (e.g., 0.05 for 5%).

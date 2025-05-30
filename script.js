@@ -1,6 +1,104 @@
 // --- Global Variables ---
 let detailedLogBucketGlobal, detailedLogTRGlobal;
-let historicalDataParsed = []; // To store parsed historical data
+let historicalDataParsed = []; // To store parsed historical data from custom input
+const BUILT_IN_HISTORICAL_DATA_CSV = `Year,StockReturn,BondReturn,CashReturn,Inflation
+1928,0.4381,0.0084,0.0308,-0.0116
+1929,-0.0830,0.0420,0.0316,0.0058
+1930,-0.2512,0.0454,0.0455,-0.0640
+1931,-0.4384,-0.0256,0.0231,-0.0932
+1932,-0.0864,0.0879,0.0107,-0.1027
+1933,0.4998,0.0186,0.0096,0.0076
+1934,-0.0119,0.0796,0.0028,0.0152
+1935,0.4674,0.0447,0.0017,0.0299
+1936,0.3194,0.0502,0.0017,0.0145
+1937,-0.3534,0.0138,0.0028,0.0286
+1938,0.2928,0.0421,0.0007,-0.0278
+1939,-0.0110,0.0441,0.0005,0.0000
+1940,-0.1067,0.0540,0.0004,0.0071
+1941,-0.1277,-0.0202,0.0013,0.0993
+1942,0.1917,0.0229,0.0034,0.0903
+1943,0.2506,0.0249,0.0038,0.0296
+1944,0.1903,0.0258,0.0038,0.0230
+1945,0.3582,0.0380,0.0038,0.0225
+1946,-0.0843,0.0313,0.0038,0.1813
+1947,0.0520,0.0092,0.0060,0.0884
+1948,0.0570,0.0195,0.0105,0.0299
+1949,0.1830,0.0466,0.0112,-0.0207
+1950,0.3081,0.0043,0.0120,0.0593
+1951,0.2368,-0.0030,0.0152,0.0600
+1952,0.1815,0.0227,0.0172,0.0075
+1953,-0.0121,0.0414,0.0189,0.0075
+1954,0.5256,0.0329,0.0094,-0.0074
+1955,0.3260,-0.0134,0.0172,0.0037
+1956,0.0744,-0.0226,0.0262,0.0299
+1957,-0.1046,0.0680,0.0322,0.0290
+1958,0.4372,-0.0210,0.0177,0.0176
+1959,0.1206,-0.0265,0.0339,0.0173
+1960,0.0034,0.1164,0.0287,0.0136
+1961,0.2664,0.0206,0.0235,0.0067
+1962,-0.0881,0.0569,0.0277,0.0133
+1963,0.2261,0.0168,0.0316,0.0164
+1964,0.1642,0.0373,0.0355,0.0097
+1965,0.1240,0.0072,0.0395,0.0192
+1966,-0.0997,0.0291,0.0486,0.0346
+1967,0.2380,-0.0158,0.0429,0.0304
+1968,0.1081,0.0327,0.0534,0.0472
+1969,-0.0824,-0.0501,0.0667,0.0620
+1970,0.0356,0.1675,0.0639,0.0557
+1971,0.1422,0.0979,0.0433,0.0327
+1972,0.1876,0.0282,0.0406,0.0341
+1973,-0.1431,0.0366,0.0704,0.0871
+1974,-0.2590,0.0199,0.0785,0.1234
+1975,0.3700,0.0361,0.0579,0.0694
+1976,0.2383,0.1598,0.0498,0.0486
+1977,-0.0698,0.0129,0.0526,0.0670
+1978,0.0651,-0.0078,0.0718,0.0902
+1979,0.1852,0.0067,0.1005,0.1329
+1980,0.3174,-0.0299,0.1139,0.1252
+1981,-0.0470,0.0820,0.1404,0.0892
+1982,0.2042,0.3281,0.1060,0.0383
+1983,0.2234,0.0320,0.0862,0.0379
+1984,0.0615,0.1373,0.0954,0.0395
+1985,0.3124,0.2571,0.0747,0.0380
+1986,0.1849,0.2428,0.0597,0.0110
+1987,0.0581,-0.0496,0.0578,0.0443
+1988,0.1654,0.0822,0.0667,0.0442
+1989,0.3148,0.1769,0.0811,0.0465
+1990,-0.0306,0.0624,0.0750,0.0611
+1991,0.3023,0.1500,0.0538,0.0306
+1992,0.0749,0.0936,0.0343,0.0290
+1993,0.0997,0.1421,0.0300,0.0275
+1994,0.0133,-0.0804,0.0425,0.0267
+1995,0.3720,0.2348,0.0549,0.0254
+1996,0.2268,0.0143,0.0501,0.0332
+1997,0.3310,0.0994,0.0506,0.0170
+1998,0.2834,0.1492,0.0478,0.0161
+1999,0.2089,-0.0825,0.0464,0.0268
+2000,-0.0903,0.1666,0.0582,0.0339
+2001,-0.1185,0.0557,0.0340,0.0155
+2002,-0.2197,0.1512,0.0161,0.0238
+2003,0.2836,0.0038,0.0101,0.0188
+2004,0.1074,0.0449,0.0137,0.0326
+2005,0.0483,0.0287,0.0315,0.0342
+2006,0.1561,0.0196,0.0473,0.0254
+2007,0.0548,0.1021,0.0436,0.0408
+2008,-0.3655,0.2010,0.0137,0.0009
+2009,0.2594,-0.1112,0.0015,0.0272
+2010,0.1482,0.0846,0.0014,0.0150
+2011,0.0210,0.1604,0.0005,0.0296
+2012,0.1589,0.0297,0.0009,0.0174
+2013,0.3215,-0.0910,0.0006,0.0150
+2014,0.1352,0.1075,0.0003,0.0076
+2015,0.0138,0.0128,0.0005,0.0073
+2016,0.1177,0.0069,0.0032,0.0207
+2017,0.2161,0.0280,0.0093,0.0211
+2018,-0.0423,-0.0002,0.0194,0.0191
+2019,0.3121,0.0964,0.0206,0.0229
+2020,0.1802,0.1133,0.0035,0.0136
+2021,0.2847,-0.0442,0.0005,0.0704
+2022,-0.1804,-0.1783,0.0202,0.0645
+2023,0.2606,0.0388,0.0507,0.0335
+2024,0.2488,-0.0164,0.0497,0.0275`;
 
 // --- PRNG and Return Generation (Monte Carlo) ---
 function mulberry32(a) {
@@ -16,14 +114,13 @@ let currentPRNG = Math.random;
 function generateStandardNormal() {
   let u1 = 0,
     u2 = 0;
-  // Guard against Math.log(0)
   while (u1 === 0) u1 = currentPRNG();
   while (u2 === 0) u2 = currentPRNG();
   return Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
 }
 
 function generateReturn(mean, stdDev) {
-  if (stdDev === 0) return mean; // No volatility
+  if (stdDev === 0) return mean;
   return mean + generateStandardNormal() * stdDev;
 }
 
@@ -60,10 +157,16 @@ function getInputs() {
   const dollarBasis = document.querySelector(
     'input[name="dollarBasis"]:checked'
   ).value;
+  const historicalDataSource =
+    simulationMode === "historical"
+      ? document.querySelector('input[name="historicalDataSource"]:checked')
+          .value
+      : null;
 
   let inputs = {
     simulationMode: simulationMode,
     dollarBasis: dollarBasis,
+    historicalDataSource: historicalDataSource, // New
     startBalance: p("startBalance"),
     initialWithdrawal: p("initialWithdrawal"),
     timeHorizon: parseInt(p("timeHorizon")),
@@ -73,7 +176,7 @@ function getInputs() {
     inputs = {
       ...inputs,
       inflationRateMean: pc("inflationRate"),
-      inflationRateStdDev: pc("inflationStdDev"), // New
+      inflationRateStdDev: pc("inflationStdDev"),
       numSimulations: parseInt(p("numSimulations")),
       stockReturnMean: pc("stockReturn"),
       stockReturnStdDev: pc("stockStdDev"),
@@ -84,8 +187,7 @@ function getInputs() {
     };
   } else {
     // Historical mode
-    // Historical data parsing will be handled separately if needed by runSimulations
-    // For now, historicalDataParsed will be populated before calling simulation functions.
+    // historicalDataParsed will be populated based on historicalDataSource choice
   }
 
   inputs = {
@@ -98,10 +200,11 @@ function getInputs() {
   return inputs;
 }
 
-function parseHistoricalData() {
-  const rawData = document.getElementById("historicalData").value.trim();
+function parseHistoricalDataCSV(csvString) {
+  // Renamed and generalized
+  const rawData = csvString.trim();
   if (!rawData) {
-    alert("Please paste historical data.");
+    // Alert is handled by calling function if needed
     return [];
   }
   const lines = rawData.split("\n");
@@ -109,7 +212,7 @@ function parseHistoricalData() {
   try {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-      if (!line || line.toLowerCase().startsWith("year")) continue; // Skip empty lines or header
+      if (!line || line.toLowerCase().startsWith("year")) continue;
       const parts = line.split(",");
       if (parts.length < 5) {
         throw new Error(`Line ${i + 1} has too few columns: ${line}`);
@@ -122,8 +225,8 @@ function parseHistoricalData() {
         inflation: parseFloat(parts[4]),
       });
     }
-    // Validate data
-    if (parsed.length === 0) throw new Error("No valid data rows found.");
+    if (parsed.length === 0)
+      throw new Error("No valid data rows found in CSV.");
     for (const row of parsed) {
       if (
         isNaN(row.year) ||
@@ -139,19 +242,19 @@ function parseHistoricalData() {
         );
       }
     }
-    parsed.sort((a, b) => a.year - b.year); // Ensure chronological order
+    parsed.sort((a, b) => a.year - b.year);
     return parsed;
   } catch (e) {
-    alert(`Error parsing historical data: ${e.message}`);
+    // Error is handled by calling function
     console.error("Historical data parsing error:", e);
-    return [];
+    throw e; // Re-throw to be caught by runSimulations
   }
 }
 
 function getRollingPeriods(fullHistoricalData, timeHorizon) {
   const periods = [];
-  if (fullHistoricalData.length < timeHorizon) {
-    return []; // Not enough data for a single period
+  if (!fullHistoricalData || fullHistoricalData.length < timeHorizon) {
+    return [];
   }
   for (let i = 0; i <= fullHistoricalData.length - timeHorizon; i++) {
     periods.push(fullHistoricalData.slice(i, i + timeHorizon));
@@ -160,35 +263,23 @@ function getRollingPeriods(fullHistoricalData, timeHorizon) {
 }
 
 // --- Simulation Logic (Core) ---
-// Shared logic for applying returns and handling withdrawals based on dollar basis
 function applyYearlyEvents(
   portfolio,
   currentYearData,
   annualWithdrawalAmount,
   params
 ) {
-  // currentYearData for historical: {stockReturn, bondReturn, cashReturn, inflation}
-  // currentYearData for MC: {stockReturn, bondReturn, cashReturn, inflation (generated for this year)}
-
   let yearStockReturn = currentYearData.stockReturn;
   let yearBondReturn = currentYearData.bondReturn;
   let yearCashReturn = currentYearData.cashReturn;
-  let yearInflation = currentYearData.inflation;
 
-  let effectiveWithdrawal = annualWithdrawalAmount;
-
-  if (params.dollarBasis === "nominal") {
-    // Withdrawals inflate. Returns are nominal.
-    // annualWithdrawalAmount passed to this function should already be inflated for the year.
-  } else {
-    // Real dollars
-    // Withdrawals are constant real. Returns need to be converted to real.
-    yearStockReturn = (1 + yearStockReturn) / (1 + yearInflation) - 1;
-    yearBondReturn = (1 + yearBondReturn) / (1 + yearInflation) - 1;
-    yearCashReturn = (1 + yearCashReturn) / (1 + yearInflation) - 1;
+  if (params.dollarBasis === "real") {
+    yearStockReturn =
+      (1 + yearStockReturn) / (1 + currentYearData.inflation) - 1;
+    yearBondReturn = (1 + yearBondReturn) / (1 + currentYearData.inflation) - 1;
+    yearCashReturn = (1 + yearCashReturn) / (1 + currentYearData.inflation) - 1;
   }
 
-  // Apply growth (using potentially adjusted real returns)
   if (portfolio.b1Balance !== undefined)
     portfolio.b1Balance *= 1 + yearCashReturn;
   if (portfolio.b2Balance !== undefined)
@@ -201,12 +292,11 @@ function applyYearlyEvents(
   if (portfolio.bondBalance !== undefined)
     portfolio.bondBalance *= 1 + yearBondReturn;
 
+  // Effective returns are those used for growth calculations
   return {
-    yearStockReturn,
-    yearBondReturn,
-    yearCashReturn,
-    yearInflation,
-    effectiveWithdrawal,
+    effectiveStockReturn: yearStockReturn,
+    effectiveBondReturn: yearBondReturn,
+    effectiveCashReturn: yearCashReturn,
   };
 }
 
@@ -220,10 +310,9 @@ function simulateThreeBucketStrategy_Engine(
   }
 
   const detailedLog = [];
-  let currentAnnualWithdrawal = params.initialWithdrawal; // Base withdrawal
+  let currentNominalWithdrawal = params.initialWithdrawal;
 
-  // Initial bucket allocation
-  const bucket1TargetInitial = params.bucket1Years * params.initialWithdrawal; // Use initial withdrawal for setup
+  const bucket1TargetInitial = params.bucket1Years * params.initialWithdrawal;
   let bucket1Balance = Math.min(params.startBalance, bucket1TargetInitial);
   const remainingAfterB1 = Math.max(0, params.startBalance - bucket1Balance);
   const bucket2TargetInitial =
@@ -237,12 +326,19 @@ function simulateThreeBucketStrategy_Engine(
   for (let year = 0; year < params.timeHorizon; year++) {
     const logEntry = {
       year: year + 1,
-      startPortfolio:
-        totalPortfolioStartOfYear /* ... other fields init to 0/N/A ... */,
+      startPortfolio: totalPortfolioStartOfYear,
+      b1GrowthAmount: 0,
+      b2GrowthAmount: 0,
+      b3GrowthAmount: 0,
+      b1RefillAmount: 0,
+      b2TransferToB1: 0,
+      b3TransferToB1: 0,
+      b2RebalanceTransfer: 0,
+      b3RebalanceTransfer: 0,
     };
 
     let yearMarketData;
-    let actualWithdrawalForYear = currentAnnualWithdrawal; // This is nominal if nominal mode, real if real mode for BUCKET SIZING
+    let actualWithdrawalForThisYear;
 
     if (params.simulationMode === "monteCarlo") {
       const generatedInflation = generateReturn(
@@ -253,35 +349,36 @@ function simulateThreeBucketStrategy_Engine(
         stockReturn: generateReturn(
           params.stockReturnMean,
           params.stockReturnStdDev
-        ),
+        ), // Nominal
         bondReturn: generateReturn(
           params.bondReturnMean,
           params.bondReturnStdDev
-        ),
+        ), // Nominal
         cashReturn: generateReturn(
           params.cashReturnMean,
           params.cashReturnStdDev
-        ),
+        ), // Nominal
         inflation: generatedInflation,
       };
-      if (params.dollarBasis === "nominal") {
-        actualWithdrawalForYear *= 1 + generatedInflation; // Current withdrawal amount inflates
-      }
+      actualWithdrawalForThisYear =
+        params.dollarBasis === "nominal"
+          ? currentNominalWithdrawal * (1 + generatedInflation)
+          : params.initialWithdrawal;
     } else {
-      // Historical
-      yearMarketData = historicalPeriodData[year]; // {year, stockReturn, bondReturn, cashReturn, inflation}
-      if (params.dollarBasis === "nominal") {
-        actualWithdrawalForYear *= 1 + yearMarketData.inflation;
-      }
+      yearMarketData = historicalPeriodData[year]; // Contains nominal returns and inflation
+      actualWithdrawalForThisYear =
+        params.dollarBasis === "nominal"
+          ? currentNominalWithdrawal * (1 + yearMarketData.inflation)
+          : params.initialWithdrawal;
     }
-    logEntry.withdrawalForYear = actualWithdrawalForYear;
-    logEntry.inflationForYear = yearMarketData.inflation; // Log the inflation used
+    logEntry.withdrawalForYear = actualWithdrawalForThisYear;
+    logEntry.inflationForYear = yearMarketData.inflation;
+    logEntry.b3ReturnPercentDecision = yearMarketData.stockReturn; // Decision based on nominal stock return
 
-    // --- Withdrawal Phase ---
     logEntry.b1Start = bucket1Balance;
     logEntry.b2Start = bucket2Balance;
     logEntry.b3Start = bucket3Balance;
-    let withdrawalNeeded = actualWithdrawalForYear;
+    let withdrawalNeeded = actualWithdrawalForThisYear;
 
     const fromB1Withdraw = Math.min(withdrawalNeeded, bucket1Balance);
     bucket1Balance -= fromB1Withdraw;
@@ -306,6 +403,12 @@ function simulateThreeBucketStrategy_Engine(
       bucket1Balance + bucket2Balance + bucket3Balance === 0
     ) {
       logEntry.endPortfolio = 0;
+      if (params.dollarBasis === "nominal")
+        currentNominalWithdrawal = actualWithdrawalForThisYear;
+      logEntry.nextYearWithdrawalBase =
+        params.dollarBasis === "nominal"
+          ? currentNominalWithdrawal
+          : params.initialWithdrawal;
       detailedLog.push(logEntry);
       for (let y = year; y < params.timeHorizon; y++)
         annualPortfolioValues.push(0);
@@ -317,17 +420,19 @@ function simulateThreeBucketStrategy_Engine(
       };
     }
 
-    // --- Growth Phase (uses Real/Nominal logic from applyYearlyEvents) ---
+    const b1PreGrowth = bucket1Balance,
+      b2PreGrowth = bucket2Balance,
+      b3PreGrowth = bucket3Balance;
     let portfolioForGrowth = {
       b1Balance: bucket1Balance,
       b2Balance: bucket2Balance,
       b3Balance: bucket3Balance,
     };
-    const { yearStockReturn, yearBondReturn, yearCashReturn } =
+    const { effectiveStockReturn, effectiveBondReturn, effectiveCashReturn } =
       applyYearlyEvents(
         portfolioForGrowth,
         yearMarketData,
-        actualWithdrawalForYear,
+        actualWithdrawalForThisYear,
         params
       );
 
@@ -335,18 +440,20 @@ function simulateThreeBucketStrategy_Engine(
     bucket2Balance = Math.max(0, portfolioForGrowth.b2Balance);
     bucket3Balance = Math.max(0, portfolioForGrowth.b3Balance);
 
-    logEntry.b1ReturnPercent = yearCashReturn; // Effective return
-    logEntry.b2ReturnPercent = yearBondReturn;
-    logEntry.b3ReturnPercentDecision = yearMarketData.stockReturn; // Decision based on nominal stock return
-    logEntry.b3ReturnPercentEffective = yearStockReturn; // Effective return for growth
+    logEntry.b1GrowthAmount = bucket1Balance - b1PreGrowth;
+    logEntry.b2GrowthAmount = bucket2Balance - b2PreGrowth;
+    logEntry.b3GrowthAmount = bucket3Balance - b3PreGrowth;
+    logEntry.b1ReturnPercent = effectiveCashReturn;
+    logEntry.b2ReturnPercent = effectiveBondReturn;
+    logEntry.b3ReturnPercentEffective = effectiveStockReturn;
 
     logEntry.b1AfterGrowth = bucket1Balance;
     logEntry.b2AfterGrowth = bucket2Balance;
     logEntry.b3AfterGrowth = bucket3Balance;
 
-    // --- Rebalancing/Refill Phase (based on nominal stock market performance and current withdrawal amount) ---
-    const b1TargetDollar = params.bucket1Years * actualWithdrawalForYear; // Target based on current year's expenses
-    const b2TargetDollar = params.bucket2YearsBonds * actualWithdrawalForYear;
+    const b1TargetDollar = params.bucket1Years * actualWithdrawalForThisYear;
+    const b2TargetDollar =
+      params.bucket2YearsBonds * actualWithdrawalForThisYear;
     logEntry.b1TargetAmount = b1TargetDollar;
     logEntry.b2TargetAmount = b2TargetDollar;
 
@@ -354,24 +461,33 @@ function simulateThreeBucketStrategy_Engine(
       bucket1Balance + bucket2Balance + bucket3Balance;
 
     if (logEntry.b3ReturnPercentDecision >= 0) {
-      // Market Up/Flat (nominal stock return)
       logEntry.reallocStrategy = "Market Up/Flat: Holistic";
       let b1Old = bucket1Balance,
         b2Old = bucket2Balance,
         b3Old = bucket3Balance;
-
       bucket1Balance = Math.min(totalPortfolioAfterGrowth, b1TargetDollar);
       let remainingForB2B3 = totalPortfolioAfterGrowth - bucket1Balance;
       bucket2Balance = Math.min(remainingForB2B3, b2TargetDollar);
-      bucket3Balance = Math.max(0, remainingForB2B3 - bucket2Balance); // Ensure B3 not negative
-
+      bucket3Balance = Math.max(0, remainingForB2B3 - bucket2Balance);
       logEntry.b1RefillAmount = bucket1Balance - b1Old;
-      // ... (rest of logging for rebalance transfers) ...
+      if (logEntry.b1RefillAmount > 0)
+        logEntry.b1RefillSource = "Portfolio Realloc";
+      else if (logEntry.b1RefillAmount < 0)
+        logEntry.b1RefillSource = "Surplus to B2/B3";
+      logEntry.b2RebalanceTransfer =
+        bucket2Balance -
+        b2Old -
+        (logEntry.b1RefillAmount < 0 && b1TargetDollar - b1Old < 0
+          ? b1TargetDollar - b1Old
+          : 0); // Approximate change not due to B1 refill
+      logEntry.b3RebalanceTransfer =
+        bucket3Balance -
+        b3Old -
+        (logEntry.b1RefillAmount < 0 && b1TargetDollar - b1Old < 0 ? 0 : 0); // Approximate change not due to B1 refill
     } else {
-      // Market Down
       logEntry.reallocStrategy = "Market Down: Conditional";
       const bucket1RefillTriggerLevel =
-        params.bucket1RefillThresholdYears * actualWithdrawalForYear;
+        params.bucket1RefillThresholdYears * actualWithdrawalForThisYear;
       if (bucket1Balance < bucket1RefillTriggerLevel) {
         let amountToRefillB1 = Math.max(0, b1TargetDollar - bucket1Balance);
         if (amountToRefillB1 > 0) {
@@ -383,14 +499,15 @@ function simulateThreeBucketStrategy_Engine(
           logEntry.b2TransferToB1 = -fromB2Refill;
         }
       }
-      // If B2 has surplus after B1 check (and potential refill), move to B3
+      let b2OldForRebalance = bucket2Balance,
+        b3OldForRebalance = bucket3Balance;
       if (bucket2Balance > b2TargetDollar) {
         const excessB2 = bucket2Balance - b2TargetDollar;
-        logEntry.b2RebalanceTransfer = -excessB2; // Moving out of B2
-        logEntry.b3RebalanceTransfer = excessB2; // Moving into B3
         bucket2Balance -= excessB2;
         bucket3Balance += excessB2;
       }
+      logEntry.b2RebalanceTransfer = bucket2Balance - b2OldForRebalance;
+      logEntry.b3RebalanceTransfer = bucket3Balance - b3OldForRebalance;
     }
     bucket1Balance = Math.max(0, bucket1Balance);
     bucket2Balance = Math.max(0, bucket2Balance);
@@ -404,12 +521,12 @@ function simulateThreeBucketStrategy_Engine(
     logEntry.endPortfolio = totalPortfolioStartOfYear;
 
     if (params.dollarBasis === "nominal") {
-      currentAnnualWithdrawal = actualWithdrawalForYear; // It was already inflated for THIS year, becomes base for NEXT.
-    } else {
-      // currentAnnualWithdrawal remains params.initialWithdrawal in real terms.
-      // actualWithdrawalForYear for next year will be the same real amount.
+      currentNominalWithdrawal = actualWithdrawalForThisYear;
     }
-    logEntry.nextYearWithdrawalBase = currentAnnualWithdrawal; // Base for next year before inflation adjustment (if nominal)
+    logEntry.nextYearWithdrawalBase =
+      params.dollarBasis === "nominal"
+        ? currentNominalWithdrawal
+        : params.initialWithdrawal;
 
     detailedLog.push(logEntry);
     annualPortfolioValues.push(totalPortfolioStartOfYear);
@@ -433,7 +550,7 @@ function simulateTotalReturnStrategy_Engine(
 
   const detailedLog = [];
   let portfolioBalance = params.startBalance;
-  let currentAnnualWithdrawal = params.initialWithdrawal; // Base withdrawal
+  let currentNominalWithdrawal = params.initialWithdrawal;
 
   let stockBalance = portfolioBalance * params.trStockAllocationRatio;
   let bondBalance = portfolioBalance * (1 - params.trStockAllocationRatio);
@@ -442,11 +559,15 @@ function simulateTotalReturnStrategy_Engine(
   for (let year = 0; year < params.timeHorizon; year++) {
     const logEntry = {
       year: year + 1,
-      startPortfolio: portfolioBalance /* ... other fields ... */,
+      startPortfolio: portfolioBalance,
+      stockGrowthAmount: 0,
+      bondGrowthAmount: 0,
+      rebalanceStockAmount: 0,
+      rebalanceBondAmount: 0,
     };
 
     let yearMarketData;
-    let actualWithdrawalForYear = currentAnnualWithdrawal;
+    let actualWithdrawalForThisYear;
 
     if (params.simulationMode === "monteCarlo") {
       const generatedInflation = generateReturn(
@@ -462,27 +583,36 @@ function simulateTotalReturnStrategy_Engine(
           params.bondReturnMean,
           params.bondReturnStdDev
         ),
-        cashReturn: 0, // Not used directly by TR asset classes
+        cashReturn: 0,
         inflation: generatedInflation,
       };
-      if (params.dollarBasis === "nominal") {
-        actualWithdrawalForYear *= 1 + generatedInflation;
-      }
+      actualWithdrawalForThisYear =
+        params.dollarBasis === "nominal"
+          ? currentNominalWithdrawal * (1 + generatedInflation)
+          : params.initialWithdrawal;
     } else {
-      // Historical
       yearMarketData = historicalPeriodData[year];
-      if (params.dollarBasis === "nominal") {
-        actualWithdrawalForYear *= 1 + yearMarketData.inflation;
-      }
+      actualWithdrawalForThisYear =
+        params.dollarBasis === "nominal"
+          ? currentNominalWithdrawal * (1 + yearMarketData.inflation)
+          : params.initialWithdrawal;
     }
-    logEntry.withdrawalForYear = actualWithdrawalForYear;
+    logEntry.withdrawalForYear = actualWithdrawalForThisYear;
     logEntry.inflationForYear = yearMarketData.inflation;
 
-    // --- Withdrawal Phase ---
     logEntry.stockStart = stockBalance;
     logEntry.bondStart = bondBalance;
-    if (portfolioBalance < actualWithdrawalForYear && portfolioBalance <= 0) {
+    if (
+      portfolioBalance < actualWithdrawalForThisYear &&
+      portfolioBalance <= 0
+    ) {
       logEntry.endPortfolio = 0;
+      if (params.dollarBasis === "nominal")
+        currentNominalWithdrawal = actualWithdrawalForThisYear;
+      logEntry.nextYearWithdrawalBase =
+        params.dollarBasis === "nominal"
+          ? currentNominalWithdrawal
+          : params.initialWithdrawal;
       detailedLog.push(logEntry);
       for (let y = year; y < params.timeHorizon; y++)
         annualPortfolioValues.push(0);
@@ -496,14 +626,21 @@ function simulateTotalReturnStrategy_Engine(
 
     let stockWithdrawal = 0,
       bondWithdrawal = 0;
+    const totalToWithdrawActually = Math.min(
+      actualWithdrawalForThisYear,
+      portfolioBalance
+    );
     if (portfolioBalance > 0) {
-      const totalToWithdraw = Math.min(
-        actualWithdrawalForYear,
-        portfolioBalance
-      ); // Don't withdraw more than available
-      stockWithdrawal = totalToWithdraw * (stockBalance / portfolioBalance);
-      bondWithdrawal = totalToWithdraw * (bondBalance / portfolioBalance);
+      stockWithdrawal =
+        totalToWithdrawActually * (stockBalance / portfolioBalance);
+      bondWithdrawal =
+        totalToWithdrawActually * (bondBalance / portfolioBalance);
+    } else {
+      // portfolio is zero, withdrawal is zero
+      stockWithdrawal = 0;
+      bondWithdrawal = 0;
     }
+
     stockBalance -= stockWithdrawal;
     bondBalance -= bondWithdrawal;
     logEntry.stockWithdrawal = stockWithdrawal;
@@ -513,6 +650,12 @@ function simulateTotalReturnStrategy_Engine(
 
     if (portfolioBalance === 0) {
       logEntry.endPortfolio = 0;
+      if (params.dollarBasis === "nominal")
+        currentNominalWithdrawal = actualWithdrawalForThisYear;
+      logEntry.nextYearWithdrawalBase =
+        params.dollarBasis === "nominal"
+          ? currentNominalWithdrawal
+          : params.initialWithdrawal;
       detailedLog.push(logEntry);
       annualPortfolioValues.push(0);
       for (let y = year + 1; y < params.timeHorizon; y++)
@@ -525,12 +668,13 @@ function simulateTotalReturnStrategy_Engine(
       };
     }
 
-    // --- Growth Phase ---
-    let portfolioForGrowth = { stockBalance, bondBalance }; // Only stock/bond for TR
-    const { yearStockReturn, yearBondReturn } = applyYearlyEvents(
+    const stockPreGrowth = stockBalance,
+      bondPreGrowth = bondBalance;
+    let portfolioForGrowth = { stockBalance, bondBalance };
+    const { effectiveStockReturn, effectiveBondReturn } = applyYearlyEvents(
       portfolioForGrowth,
       yearMarketData,
-      actualWithdrawalForYear,
+      actualWithdrawalForThisYear,
       params
     );
 
@@ -538,12 +682,13 @@ function simulateTotalReturnStrategy_Engine(
     bondBalance = Math.max(0, portfolioForGrowth.bondBalance);
     portfolioBalance = stockBalance + bondBalance;
 
-    logEntry.stockReturnPercent = yearStockReturn;
-    logEntry.bondReturnPercent = yearBondReturn;
+    logEntry.stockGrowthAmount = stockBalance - stockPreGrowth;
+    logEntry.bondGrowthAmount = bondBalance - bondPreGrowth;
+    logEntry.stockReturnPercent = effectiveStockReturn;
+    logEntry.bondReturnPercent = effectiveBondReturn;
     logEntry.stockAfterGrowth = stockBalance;
     logEntry.bondAfterGrowth = bondBalance;
 
-    // --- Rebalancing Phase ---
     if (portfolioBalance > 0) {
       const targetStock = portfolioBalance * params.trStockAllocationRatio;
       const targetBond = portfolioBalance * (1 - params.trStockAllocationRatio);
@@ -557,9 +702,12 @@ function simulateTotalReturnStrategy_Engine(
     logEntry.endPortfolio = portfolioBalance;
 
     if (params.dollarBasis === "nominal") {
-      currentAnnualWithdrawal = actualWithdrawalForYear;
+      currentNominalWithdrawal = actualWithdrawalForThisYear;
     }
-    logEntry.nextYearWithdrawalBase = currentAnnualWithdrawal;
+    logEntry.nextYearWithdrawalBase =
+      params.dollarBasis === "nominal"
+        ? currentNominalWithdrawal
+        : params.initialWithdrawal;
 
     detailedLog.push(logEntry);
     annualPortfolioValues.push(portfolioBalance);
@@ -584,13 +732,12 @@ function runMonteCarlo(
     ...baseParams,
     ...strategySpecificParams,
     simulationMode: "monteCarlo",
-  }; // Ensure mode is set
+  };
   const simResults = [];
   let successfulRuns = 0;
 
   for (let i = 0; i < numSimulations; i++) {
     const seed = initialSeedForSet + i;
-    // Use the appropriate engine function
     const result =
       simulationFunction === simulateThreeBucketStrategy_Engine
         ? simulateThreeBucketStrategy_Engine(allParams, null, seed)
@@ -659,7 +806,7 @@ function runHistoricalBacktest(
     ...baseParams,
     ...strategySpecificParams,
     simulationMode: "historical",
-  }; // Ensure mode
+  };
   const rollingPeriods = getRollingPeriods(
     fullHistoricalData,
     baseParams.timeHorizon
@@ -669,7 +816,9 @@ function runHistoricalBacktest(
       probabilityOfSuccess: NaN,
       detailedLogs: [],
       firstPeriodLog: null,
-    }; // Not enough data
+      successfulPeriods: 0,
+      totalPeriods: 0,
+    };
   }
 
   let successfulRuns = 0;
@@ -684,7 +833,6 @@ function runHistoricalBacktest(
 
     if (result.success) successfulRuns++;
     if (i === 0) {
-      // Capture log of the first simulated historical period
       firstPeriodDetailedLog = result.detailedLog;
     }
   }
@@ -693,16 +841,15 @@ function runHistoricalBacktest(
   return {
     probabilityOfSuccess,
     firstPeriodLog: firstPeriodDetailedLog,
+    successfulPeriods: successfulRuns,
     totalPeriods: rollingPeriods.length,
-  };
+  }; // Added successfulPeriods
 }
 
 // --- Charting and Display ---
 function calculateMedianPath(allPaths, timeHorizon) {
-  /* ... (keep existing) ... */
   const medianPath = [];
   for (let yearIdx = 0; yearIdx <= timeHorizon; yearIdx++) {
-    // Iterate up to and including timeHorizon (e.g. 30 years means 31 data points: start + 30 ends)
     const valuesForYear = allPaths
       .map((path) => (path && path[yearIdx] !== undefined ? path[yearIdx] : 0))
       .sort((a, b) => a - b);
@@ -715,15 +862,14 @@ function calculateMedianPath(allPaths, timeHorizon) {
   return medianPath;
 }
 function renderChart(svgElement, dataSets, timeHorizon, startBalance) {
-  /* ... (keep existing) ... */
-  svgElement.innerHTML = ""; // Clear previous chart
+  svgElement.innerHTML = "";
   const padding = { top: 20, right: 30, bottom: 50, left: 80 };
   const chartWidth =
     svgElement.width.baseVal.value - padding.left - padding.right;
   const chartHeight =
     svgElement.height.baseVal.value - padding.top - padding.bottom;
 
-  let maxY = startBalance > 0 ? startBalance * 1.1 : 1000; // Initial sensible max Y
+  let maxY = startBalance > 0 ? startBalance * 1.1 : 1000;
   if (dataSets && dataSets.length > 0 && dataSets[0].values.length > 0) {
     dataSets.forEach((dataSet) =>
       dataSet.values.forEach((val) => {
@@ -731,18 +877,17 @@ function renderChart(svgElement, dataSets, timeHorizon, startBalance) {
       })
     );
     if (maxY < startBalance * 1.1 && startBalance > 0)
-      maxY = startBalance * 1.1; // Ensure start balance is visible
+      maxY = startBalance * 1.1;
   } else if (startBalance > 0) {
     maxY = startBalance * 1.1;
   } else {
-    maxY = 1000; // Default if no data and no start balance
+    maxY = 1000;
   }
   if (maxY === 0 && startBalance > 0) maxY = startBalance * 1.1;
-  // Handle edge case where all values are 0 but start isn't
   else if (maxY === 0 && startBalance === 0) maxY = 100;
 
   const xScale = timeHorizon > 0 ? chartWidth / timeHorizon : chartWidth;
-  const yScale = maxY > 0 ? chartHeight / maxY : 0; // Avoid division by zero if maxY is 0
+  const yScale = maxY > 0 ? chartHeight / maxY : 0;
 
   const ns = "http://www.w3.org/2000/svg";
 
@@ -775,7 +920,6 @@ function renderChart(svgElement, dataSets, timeHorizon, startBalance) {
     return text;
   }
 
-  // Axes
   svgElement.appendChild(
     createSVGElement("line", {
       x1: padding.left,
@@ -795,7 +939,6 @@ function renderChart(svgElement, dataSets, timeHorizon, startBalance) {
     })
   );
 
-  // X-axis Ticks and Labels
   const xTickIncrement =
     timeHorizon >= 20 ? 5 : timeHorizon >= 10 ? 2 : timeHorizon > 0 ? 1 : 0;
   if (xTickIncrement > 0) {
@@ -831,11 +974,10 @@ function renderChart(svgElement, dataSets, timeHorizon, startBalance) {
     )
   );
 
-  // Y-axis Ticks and Labels
   const numYTicks = 5;
   for (let i = 0; i <= numYTicks; i++) {
     const val = maxY * (i / numYTicks);
-    const y = padding.top + chartHeight - (maxY > 0 ? val * yScale : 0); // If maxY is 0, place at bottom
+    const y = padding.top + chartHeight - (maxY > 0 ? val * yScale : 0);
     svgElement.appendChild(
       createSVGElement("line", {
         x1: padding.left - 5,
@@ -868,7 +1010,6 @@ function renderChart(svgElement, dataSets, timeHorizon, startBalance) {
     )
   );
 
-  // Data Lines
   if (dataSets && dataSets.length > 0) {
     dataSets.forEach((dataSet) => {
       if (dataSet.values && dataSet.values.length > 0) {
@@ -879,13 +1020,13 @@ function renderChart(svgElement, dataSets, timeHorizon, startBalance) {
         });
         let points = "";
         dataSet.values.forEach((val, index) => {
-          if (typeof val !== "number" || isNaN(val)) val = 0; // Handle non-numeric or NaN
+          if (typeof val !== "number" || isNaN(val)) val = 0;
           const x = padding.left + index * xScale;
-          const yVal = Math.max(0, val); // Ensure value is not negative for plotting height
+          const yVal = Math.max(0, val);
           const y =
             padding.top +
             chartHeight -
-            (maxY > 0 ? yVal * yScale : chartHeight); // If maxY is 0, all points at bottom
+            (maxY > 0 ? yVal * yScale : chartHeight);
           points += `${x},${y} `;
         });
         polyline.setAttribute("points", points.trim());
@@ -956,22 +1097,23 @@ function displayResults(
   } else {
     // Historical
     tableHTML += `
-            <tr><td>Probability of Success (Historical)</td><td>${fmtP(
-              histResultsBucket.probabilityOfSuccess
-            )} (${histResultsBucket.totalPeriods} periods)</td><td>${fmtP(
-      histResultsTR.probabilityOfSuccess
-    )} (${histResultsTR.totalPeriods} periods)</td></tr>
+            <tr><td>Probability of Success (Historical)</td>
+                <td>${fmtP(histResultsBucket.probabilityOfSuccess)} (${
+      histResultsBucket.successfulPeriods
+    } out of ${histResultsBucket.totalPeriods} periods)</td>
+                <td>${fmtP(histResultsTR.probabilityOfSuccess)} (${
+      histResultsTR.successfulPeriods
+    } out of ${histResultsTR.totalPeriods} periods)</td>
+            </tr>
         `;
     chartTitle.textContent =
       "Portfolio Value (Historical Mode - Chart N/A for aggregate)";
     chartSVG.innerHTML =
       '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">Chart displays median Monte Carlo paths. Not applicable for historical aggregate.</text>';
-    // chartContainer.style.display = "none"; // Or display message as above
   }
   tableHTML += `</tbody></table>`;
   resultsTableContainer.innerHTML = tableHTML;
 
-  // Detailed Logs Display
   const detailedLogDiv = document.getElementById("detailedLogOutput");
   let logBucketData = null;
   let logTRData = null;
@@ -979,14 +1121,13 @@ function displayResults(
   let logTRTitle = "Detailed Log: Total Return Strategy";
 
   if (inputs.simulationMode === "monteCarlo") {
-    // Re-run median sim to get logs
     const medianBucketSim = simulateThreeBucketStrategy_Engine(
       { ...inputs, simulationMode: "monteCarlo" },
       null,
       mcResultsBucket.medianRunSeed
     );
     logBucketData = medianBucketSim.detailedLog;
-    detailedLogBucketGlobal = logBucketData; // For CSV download
+    detailedLogBucketGlobal = logBucketData;
 
     const medianTRSim = simulateTotalReturnStrategy_Engine(
       { ...inputs, simulationMode: "monteCarlo" },
@@ -994,12 +1135,11 @@ function displayResults(
       mcResultsTR.medianRunSeed
     );
     logTRData = medianTRSim.detailedLog;
-    detailedLogTRGlobal = logTRData; // For CSV download
+    detailedLogTRGlobal = logTRData;
     logBucketTitle += " (Median Monte Carlo Run)";
     logTRTitle += " (Median Monte Carlo Run)";
   } else {
-    // Historical
-    logBucketData = histResultsBucket.firstPeriodLog; // Log from the first historical period
+    logBucketData = histResultsBucket.firstPeriodLog;
     detailedLogBucketGlobal = logBucketData;
 
     logTRData = histResultsTR.firstPeriodLog;
@@ -1037,11 +1177,8 @@ function displayResults(
 }
 
 function generateDetailedLogTable(logData, strategyType) {
-  /* ... (keep existing, but ensure headers match new logEntry fields if any) ... */
   if (!logData || logData.length === 0)
     return "<p>No detailed log data available for this run.</p>";
-  // Make sure your logData entries contain all fields accessed here
-  // e.g., entry.inflationForYear, entry.b3ReturnPercentDecision, entry.b3ReturnPercentEffective
   let headers, rows;
   if (strategyType === "3-bucket") {
     headers = `<th>Yr</th><th>Start Port.</th><th>W/D Amt</th><th>Inflation</th>
@@ -1091,7 +1228,6 @@ function generateDetailedLogTable(logData, strategyType) {
       )
       .join("");
   } else {
-    // total-return
     headers = `<th>Yr</th><th>Start Port.</th><th>W/D Amt</th><th>Inflation</th><th>Port. After W/D</th>
                        <th>Stock Start</th><th>Stock W/D</th><th>Stock Eff.Ret%</th><th>Stock Growth</th><th>Stock After Growth</th><th>Stock Rebal.</th><th>Stock End</th>
                        <th>Bond Start</th><th>Bond W/D</th><th>Bond Eff.Ret%</th><th>Bond Growth</th><th>Bond After Growth</th><th>Bond Rebal.</th><th>Bond End</th>
@@ -1129,7 +1265,6 @@ function generateDetailedLogTable(logData, strategyType) {
 }
 
 function downloadCSV(logData, filename) {
-  /* ... (keep existing) ... */
   if (!logData || logData.length === 0) {
     alert("No data to download.");
     return;
@@ -1168,15 +1303,13 @@ function downloadCSV(logData, filename) {
 
 // --- Event Listeners and UI Control ---
 function addCollapsibleEventListeners() {
-  /* ... (keep existing) ... */
   var coll = document.getElementsByClassName("collapsible");
   for (var i = 0; i < coll.length; i++) {
-    coll[i].removeEventListener("click", toggleCollapsible); // Prevent multiple listeners
+    coll[i].removeEventListener("click", toggleCollapsible);
     coll[i].addEventListener("click", toggleCollapsible);
   }
 }
 function toggleCollapsible() {
-  /* ... (keep existing) ... */
   this.classList.toggle("active");
   var content = this.nextElementSibling;
   if (content.style.display === "block") {
@@ -1194,6 +1327,21 @@ function toggleModeInputs() {
     mode === "monteCarlo" ? "block" : "none";
   document.getElementById("historicalInputs").style.display =
     mode === "historical" ? "block" : "none";
+
+  if (mode === "historical") {
+    toggleHistoricalDataSourceInputs(); // Also update visibility of custom data textarea
+  } else {
+    document.getElementById("customHistoricalDataSection").style.display =
+      "none"; // Hide if not historical
+  }
+}
+
+function toggleHistoricalDataSourceInputs() {
+  const dataSource = document.querySelector(
+    'input[name="historicalDataSource"]:checked'
+  ).value;
+  document.getElementById("customHistoricalDataSection").style.display =
+    dataSource === "custom" ? "block" : "none";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -1201,7 +1349,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('input[name="simulationMode"]').forEach((radio) => {
     radio.addEventListener("change", toggleModeInputs);
   });
-  toggleModeInputs(); // Initial call to set visibility
+  document
+    .querySelectorAll('input[name="historicalDataSource"]')
+    .forEach((radio) => {
+      radio.addEventListener("change", toggleHistoricalDataSourceInputs);
+    });
+  toggleModeInputs();
 });
 
 // --- Main Simulation Trigger ---
@@ -1215,7 +1368,6 @@ function runSimulations() {
   const detailedLogDiv = document.getElementById("detailedLogOutput");
   const chartContainer = document.getElementById("chartContainer");
 
-  // Basic Input Validations
   if (
     inputs.startBalance <= 0 ||
     inputs.initialWithdrawal < 0 ||
@@ -1229,6 +1381,7 @@ function runSimulations() {
     detailedLogDiv.style.display = "none";
     return;
   }
+  // ... (other validations remain the same) ...
   if (inputs.timeHorizon > 200) {
     resultsStatusDiv.innerHTML =
       "<p style='color:red;'>Time Horizon too large (max 200 years).</p>";
@@ -1254,20 +1407,20 @@ function runSimulations() {
   }
 
   resultsStatusDiv.innerHTML = "<p>Running simulations... please wait.</p>";
-  resultsTableContainer.innerHTML = ""; // Clear previous table
-  chartContainer.style.display = "block"; // Ensure chart container is visible
+  resultsTableContainer.innerHTML = "";
+  chartContainer.style.display = "block";
   chartSVG.innerHTML =
     '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">Calculating...</text>';
   detailedLogDiv.innerHTML = "<p>Calculating detailed logs...</p>";
   detailedLogDiv.style.display = "block";
 
-  // Use setTimeout to allow UI to update before heavy computation
   setTimeout(() => {
     try {
       let mcResultsBucket = {},
         mcResultsTR = {};
       let histResultsBucket = {},
         histResultsTR = {};
+      let activeHistoricalData = [];
 
       if (inputs.simulationMode === "monteCarlo") {
         if (inputs.numSimulations <= 0) {
@@ -1296,20 +1449,35 @@ function runSimulations() {
         );
         resultsStatusDiv.innerHTML = "<p>Monte Carlo simulations complete.</p>";
       } else {
-        // Historical
-        historicalDataParsed = parseHistoricalData();
-        if (historicalDataParsed.length === 0) {
+        if (inputs.historicalDataSource === "builtIn") {
+          activeHistoricalData = parseHistoricalDataCSV(
+            BUILT_IN_HISTORICAL_DATA_CSV
+          );
+        } else {
+          // custom
+          const customDataString =
+            document.getElementById("historicalData").value;
+          if (!customDataString.trim()) {
+            resultsStatusDiv.innerHTML =
+              "<p style='color:red;'>Custom historical data is selected but the text area is empty.</p>";
+            return;
+          }
+          activeHistoricalData = parseHistoricalDataCSV(customDataString);
+        }
+
+        if (activeHistoricalData.length === 0) {
+          // This check handles errors from parseHistoricalDataCSV as well
           resultsStatusDiv.innerHTML =
-            "<p style='color:red;'>Historical data could not be parsed or is empty.</p>";
+            "<p style='color:red;'>Historical data could not be parsed or is empty. Check console for details if providing custom data.</p>";
           return;
         }
-        if (historicalDataParsed.length < inputs.timeHorizon) {
-          resultsStatusDiv.innerHTML = `<p style='color:red;'>Not enough historical data (${historicalDataParsed.length} years) for the selected time horizon (${inputs.timeHorizon} years).</p>`;
+        if (activeHistoricalData.length < inputs.timeHorizon) {
+          resultsStatusDiv.innerHTML = `<p style='color:red;'>Not enough historical data (${activeHistoricalData.length} years) for the selected time horizon (${inputs.timeHorizon} years).</p>`;
           return;
         }
         histResultsBucket = runHistoricalBacktest(
           simulateThreeBucketStrategy_Engine,
-          historicalDataParsed,
+          activeHistoricalData,
           inputs,
           {
             bucket1Years: inputs.bucket1Years,
@@ -1319,12 +1487,11 @@ function runSimulations() {
         );
         histResultsTR = runHistoricalBacktest(
           simulateTotalReturnStrategy_Engine,
-          historicalDataParsed,
+          activeHistoricalData,
           inputs,
           { trStockAllocationRatio: inputs.trStockAllocationRatio }
         );
         if (isNaN(histResultsBucket.probabilityOfSuccess)) {
-          // Check if backtest had enough data
           resultsStatusDiv.innerHTML =
             "<p style='color:red;'>Not enough historical data for any rolling periods.</p>";
           return;
