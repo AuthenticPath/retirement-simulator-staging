@@ -42,26 +42,27 @@ COLUMN HEADERS FOR 3-BUCKET STRATEGY EXPLAINED
 COLUMN HEADERS FOR TOTAL RETURN STRATEGY EXPLAINED
 ----------------------------------------------------
 
-| Column Header          | What it Represents                                                                             |
-| ---------------------- | ---------------------------------------------------------------------------------------------- |
-| **Year**               | Which year of the simulation you’re looking at (1, 2, 3, …).                                   |
-| **Start Port.**        | Total portfolio value at the **beginning** of that year.                                       |
-| **Withdrawal**         | Amount you pulled out for living expenses during that year.                                    |
-| **Port. After W/D**    | Portfolio value **after** you’ve taken that withdrawal (before any growth).                    |
-| **Stock Start**        | Portion invested in stocks at the start of the year.                                           |
-| **Stock W/D**          | Portion of your withdrawal taken out of the stock bucket.                                      |
-| **Stock Ret%**         | Stock bucket’s percentage return that year.                                                    |
-| **Stock Growth**       | Dollar amount the stock bucket gained or lost from returns.                                    |
-| **Stock After Growth** | Stock bucket balance **after** adding/subtracting growth.                                      |
-| **Stock Rebal.**       | Dollars moved into or out of stocks to reset back to your target allocation (e.g. 60% stocks). |
-| **Stock End**          | Stock bucket balance at the **end** of the year (after growth and rebalancing).                |
-| **Bond Start**         | Portion invested in bonds at the start of the year.                                            |
-| **Bond W/D**           | Portion of your withdrawal taken out of the bond bucket.                                       |
-| **Bond Ret%**          | Bond bucket’s percentage return that year.                                                     |
-| **Bond Growth**        | Dollar amount the bond bucket gained or lost from returns.                                     |
-| **Bond After Growth**  | Bond bucket balance **after** adding/subtracting growth.                                       |
-| **Bond Rebal.**        | Dollars moved into or out of bonds during the annual rebalance.                                |
-| **Bond End**           | Bond bucket balance at the **end** of the year.                                                |
-| **End Port.**          | Total portfolio value at the **end** of the year (sum of stocks + bonds).                      |
-| **Next Yr W/D**        | How much your annual withdrawal will be next year (inflation-adjusted).                        |
+| Column Header          | What it Represents                                                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| **Yr**                 | Which year of the simulation you’re looking at (1, 2, 3, …).                                     |
+| **Start Port.**        | Total portfolio value at the **beginning** of that year.                                         |
+| **W/D Amt**            | Amount you pulled out for living expenses during that year.                                      |
+| **Inflation**          | The inflation rate for that year (used to adjust future withdrawals).                            |
+| **Port. After W/D**    | Portfolio value **after** subtracting that year’s withdrawal.                                    |
+| **Stock Start**        | Stock holdings balance at the **start** of the year.                                             |
+| **Stock W/D**          | Portion of your withdrawal taken out of stocks.                                                  |
+| **Stock Eff.Ret%**     | Stock holdings’ effective percentage return for the year (adjusted for inflation if applicable). |
+| **Stock Growth**       | Dollar amount the stock holdings gained or lost from returns.                                    |
+| **Stock After Growth** | Stock balance **after** applying that year’s growth.                                             |
+| **Stock Rebal.**       | Dollars moved between stocks and bonds to restore the target allocation.                         |
+| **Stock End**          | Stock holdings balance at the **end** of the year.                                               |
+| **Bond Start**         | Bond holdings balance at the **start** of the year.                                              |
+| **Bond W/D**           | Portion of your withdrawal taken out of bonds.                                                   |
+| **Bond Eff.Ret%**      | Bond holdings’ percentage return for the year.                                                   |
+| **Bond Growth**        | Dollar amount the bond holdings gained or lost from returns.                                     |
+| **Bond After Growth**  | Bond balance **after** applying that year’s growth.                                              |
+| **Bond Rebal.**        | Dollars moved between bonds and stocks to restore the target allocation.                         |
+| **Bond End**           | Bond holdings balance at the **end** of the year.                                                |
+| **End Port.**          | Total portfolio value at the **end** of the year (sum of stocks + bonds).                        |
+| **Next Yr W/D Base**   | Base amount for next year’s withdrawal (adjusted by inflation if using nominal dollars).         |
 
