@@ -129,10 +129,26 @@ button:hover {
   min-width: 280px;
 }
 
+/* ⮟⮟⮟ REPLACE THIS ENTIRE BLOCK IN style.css ⮟⮟⮟ */
+
+/* ===== [1] TOOLTIP STYLES (GENERAL) ===== */
 .tooltip {
   position: relative;
-  display: inline-block;
+  display: inline-flex; /* Use flexbox for centering */
+  align-items: center;
+  justify-content: center;
   cursor: help;
+  margin-left: 4px;
+  font-weight: 400;
+  color: var(--text-light);
+  border: 1px solid #c4c8cf;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  font-size: 11px;
+  line-height: 1;
+  vertical-align: middle;
+  transform: translateY(-1px); /* Minor vertical alignment */
 }
 
 .tooltip .tooltiptext {
@@ -140,25 +156,37 @@ button:hover {
   width: 250px;
   background-color: var(--text-medium);
   color: #fff;
-  text-align: center;
+  text-align: left; /* Better for reading longer text */
+  white-space: normal; /* Allow text to wrap */
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 8px 12px;
   position: absolute;
-  z-index: 1;
-  bottom: 125%;
+  z-index: 10;
+  bottom: 150%; /* Default position: ABOVE the icon */
   left: 50%;
-  margin-left: -125px; /* Half of width */
+  margin-left: -125px; /* Center the tooltip */
   opacity: 0;
   transition: opacity 0.3s ease;
   font-size: 0.85em;
   font-weight: normal;
 }
 
+/* Arrow for tooltips that pop up ABOVE (points down) */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--text-medium) transparent transparent transparent;
+}
+
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
 }
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -272,45 +300,18 @@ td {
 }
 
 
-/* ⮟⮟⮟ REPLACE THIS ENTIRE BLOCK IN style.css ⮟⮟⮟ */
+/* ⮟⮟⮟ REPLACE THIS ENTIRE BLOCK AT THE END OF style.css ⮟⮟⮟ */
 
-/* ===== [1] TABLE HEADER TOOLTIPS ===== */
-th .tooltip {
-  margin-left: 4px;
-  font-weight: 400; /* Normal weight for the '?' */
-  color: var(--text-light);
-  border: 1px solid #c4c8cf;
-  border-radius: 50%;
-  width: 15px;
-  height: 15px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  vertical-align: middle;
-  transform: translateY(-1px); /* Minor position adjustment */
-}
-
-/* Position tooltip text BELOW the icon and allow wrapping */
+/* ===== [2] TOOLTIP STYLES (TABLE HEADER OVERRIDE) ===== */
+/* This block only repositions the popup text for table headers to prevent clipping. */
 th .tooltip .tooltiptext {
-  top: 125%; /* CHANGE: Position below the icon */
-  bottom: auto; /* CHANGE: Unset bottom positioning */
-  left: 50%;
-  margin-left: -125px; /* Half of width */
-  text-align: left;
-  white-space: normal;
-  z-index: 10; /* Ensure it's on top of other table content */
+  top: 125%; /* Position BELOW the icon */
+  bottom: auto; /* Unset the default 'bottom' positioning */
 }
 
-/* ADD: Arrow pointing up to the header */
+/* Override the arrow to point UP for tooltips that pop up BELOW */
 th .tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  bottom: 100%; /* Position arrow at the top of the tooltip */
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
+  bottom: 100%;
+  top: auto;
   border-color: transparent transparent var(--text-medium) transparent;
 }
