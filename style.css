@@ -270,3 +270,33 @@ td {
   border-top: none;
   border-radius: 0 0 6px 6px;
 }
+
+
+/* ⮟⮟⮟ ADD THIS BLOCK TO THE END OF style.css ⮟⮟⮟ */
+
+/* ===== [1] TABLE HEADER TOOLTIPS ===== */
+th .tooltip {
+  margin-left: 4px;
+  font-weight: 400; /* Normal weight for the '?' */
+  color: var(--text-light);
+  border: 1px solid #c4c8cf;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  vertical-align: middle;
+  transform: translateY(-1px); /* Minor position adjustment */
+}
+
+/* Position tooltip text above the icon and allow wrapping */
+th .tooltip .tooltiptext {
+  bottom: 150%;
+  left: 50%;
+  margin-left: -125px; /* Half of width */
+  text-align: left;
+  white-space: normal;
+}
