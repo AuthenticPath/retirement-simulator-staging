@@ -1176,16 +1176,152 @@ function displayResults(
   }
 }
 
+// ⮟⮟⮟ REPLACE THIS ENTIRE BLOCK IN script.js ⮟⮟⮟
+
+// ==== [1] DETAILED LOG TOOLTIP DEFINITIONS & TABLE GENERATOR ====
+
+const BUCKET_STRATEGY_TOOLTIPS = {
+  Yr: "Which year of the simulation you’re looking at (1, 2, 3, …).",
+  "Start Port.": "Total portfolio value at the beginning of that year.",
+  "W/D Amt": "Amount you pulled out for living expenses during that year.",
+  Inflation:
+    "The inflation rate for that year (used to adjust future withdrawals in Nominal mode).",
+  "B1 Start": "Cash bucket (Bucket 1) balance at the start of the year.",
+  "B1 W/D": "Portion of your withdrawal taken out of Bucket 1.",
+  "B1 Eff.Ret%":
+    "Cash bucket’s percentage return that year. In Real Dollars mode, this return is adjusted for inflation.",
+  "B1 Growth": "Dollar amount the cash bucket gained or lost from returns.",
+  "B1 After Growth": "Cash bucket balance after adding/subtracting growth.",
+  "B1 Target $":
+    "How much cash you aim to keep in Bucket 1 (based on your “years of expenses” setting).",
+  "B1 Refill":
+    "Dollars moved into Bucket 1 to bring it back up to its target.",
+  "B1 Src":
+    "Where those refill dollars came from (e.g., from reallocating the overall portfolio or from B2).",
+  "B1 End":
+    "Cash bucket balance at the end of the year (after growth and any refilling).",
+  "B2 Start": "Bonds bucket (Bucket 2) balance at the start of the year.",
+  "B2 W/D": "Portion of your withdrawal taken out of Bucket 2.",
+  "B2 Eff.Ret%":
+    "Bond bucket’s percentage return that year. In Real Dollars mode, this return is adjusted for inflation.",
+  "B2 Growth": "Dollar amount the bond bucket gained or lost from returns.",
+  "B2 After Growth": "Bond bucket balance after growth.",
+  "B2 Target $":
+    "How much you aim to keep in Bucket 2 (based on its “years of expenses” setting).",
+  "B2 To B1":
+    "Dollars transferred from Bucket 2 into Bucket 1 to refill it during down markets.",
+  "B2 Rebal.":
+    "Dollars moved between B2 and B3 when rebalancing in up markets or after refills.",
+  "B2 End": "Bond bucket balance at the end of the year.",
+  "B3 Start": "Stock bucket (Bucket 3) balance at the start of the year.",
+  "B3 W/D": "Portion of your withdrawal taken out of Bucket 3.",
+  "B3 Nom.Ret% (Decision)":
+    "Stock bucket’s nominal return used to decide whether markets were “up” or “down” for rebalancing.",
+  "B3 Eff.Ret%":
+    "Stock bucket’s percentage return that year. In Real Dollars mode, this return is adjusted for inflation.",
+  "B3 Growth": "Dollar amount the stock bucket gained or lost from returns.",
+  "B3 After Growth": "Stock bucket balance after growth.",
+  "B3 To B1":
+    "Dollars moved from Bucket 3 into Bucket 1 (only if both B1 & B2 are empty).",
+  "B3 Rebal.":
+    "Dollars moved from B2 into B3 (in down markets) or from B3 into B2 (in up markets) during rebalance.",
+  "B3 End": "Stock bucket balance at the end of the year.",
+  "Realloc Strat.":
+    "Which refill/rebalancing rule was applied that year (e.g., “Market Up/Flat” or “Market Down”).",
+  "End Port.": "Total portfolio value at the end of the year (sum of B1 + B2 + B3).",
+  "Next Yr W/D Base":
+    "How much your annual withdrawal will be next year (inflation-adjusted).",
+};
+
+const TOTAL_RETURN_STRATEGY_TOOLTIPS = {
+  Yr: "Which year of the simulation you’re looking at (1, 2, 3, …).",
+  "Start Port.": "Total portfolio value at the beginning of that year.",
+  "W/D Amt": "Amount you pulled out for living expenses during that year.",
+  Inflation:
+    "The inflation rate for that year (used to adjust future withdrawals in Nominal mode).",
+  "Port. After W/D":
+    "Portfolio value after subtracting that year’s withdrawal.",
+  "Stock Start": "Stock holdings balance at the start of the year.",
+  "Stock W/D": "Portion of your withdrawal taken out of stocks.",
+  "Stock Eff.Ret%":
+    "Stock holdings’ effective percentage return for the year (adjusted for inflation if applicable).",
+  "Stock Growth":
+    "Dollar amount the stock holdings gained or lost from returns.",
+  "Stock After Growth": "Stock balance after applying that year’s growth.",
+  "Stock Rebal.":
+    "Dollars moved between stocks and bonds to restore the target allocation.",
+  "Stock End": "Stock holdings balance at the end of the year.",
+  "Bond Start": "Bond holdings balance at the start of the year.",
+  "Bond W/D": "Portion of your withdrawal taken out of bonds.",
+  "Bond Eff.Ret%":
+    "Bond holdings’ percentage return for the year (adjusted for inflation if applicable).",
+  "Bond Growth":
+    "Dollar amount the bond holdings gained or lost from returns.",
+  "Bond After Growth": "Bond balance after applying that year’s growth.",
+  "Bond Rebal.":
+    "Dollars moved between bonds and stocks to restore the target allocation.",
+  "Bond End": "Bond holdings balance at the end of the year.",
+  "End Port.": "Total portfolio value at the end of the year (sum of stocks + bonds).",
+  "Next Yr W/D Base":
+    "Base amount for next year’s withdrawal (adjusted by inflation if using nominal dollars).",
+};
+
 function generateDetailedLogTable(logData, strategyType) {
   if (!logData || logData.length === 0)
     return "<p>No detailed log data available for this run.</p>";
-  let headers, rows;
+
+  const tooltips =
+    strategyType === "3-bucket"
+      ? BUCKET_STRATEGY_TOOLTIPS
+      : TOTAL_RETURN_STRATEGY_TOOLTIPS;
+
+  const createHeader = (textWithMarkup) => {
+    const key = textWithMarkup.replace(/<.*?>/g, ""); // Strip HTML for map lookup
+    const tooltipText = tooltips[key];
+    if (tooltipText) {
+      return `<th>${textWithMarkup}<span class="tooltip">?<span class="tooltiptext">${tooltipText}</span></span></th>`;
+    }
+    return `<th>${textWithMarkup}</th>`;
+  };
+
+  let headerTexts, rows;
   if (strategyType === "3-bucket") {
-    headers = `<th>Yr</th><th>Start Port.</th><th>W/D Amt</th><th>Inflation</th>
-                       <th>B1 Start</th><th>B1 W/D</th><th>B1 Eff.Ret%</th><th>B1 Growth</th><th>B1 After Growth</th><th>B1 Target $</th><th>B1 Refill</th><th>B1 Src</th><th>B1 End</th>
-                       <th>B2 Start</th><th>B2 W/D</th><th>B2 Eff.Ret%</th><th>B2 Growth</th><th>B2 After Growth</th><th>B2 Target $</th><th>B2 To B1</th><th>B2 Rebal.</th><th>B2 End</th>
-                       <th>B3 Start</th><th>B3 W/D</th><th>B3 Nom.Ret% <mark>(Decision)</mark></th><th>B3 Eff.Ret%</th><th>B3 Growth</th><th>B3 After Growth</th><th>B3 To B1</th><th>B3 Rebal.</th><th>B3 End</th>
-                       <th>Realloc Strat.</th><th>End Port.</th><th>Next Yr W/D Base</th>`;
+    headerTexts = [
+      "Yr",
+      "Start Port.",
+      "W/D Amt",
+      "Inflation",
+      "B1 Start",
+      "B1 W/D",
+      "B1 Eff.Ret%",
+      "B1 Growth",
+      "B1 After Growth",
+      "B1 Target $",
+      "B1 Refill",
+      "B1 Src",
+      "B1 End",
+      "B2 Start",
+      "B2 W/D",
+      "B2 Eff.Ret%",
+      "B2 Growth",
+      "B2 After Growth",
+      "B2 Target $",
+      "B2 To B1",
+      "B2 Rebal.",
+      "B2 End",
+      "B3 Start",
+      "B3 W/D",
+      "B3 Nom.Ret% <mark>(Decision)</mark>",
+      "B3 Eff.Ret%",
+      "B3 Growth",
+      "B3 After Growth",
+      "B3 To B1",
+      "B3 Rebal.",
+      "B3 End",
+      "Realloc Strat.",
+      "End Port.",
+      "Next Yr W/D Base",
+    ];
     rows = logData
       .map(
         (entry) => `<tr>
@@ -1228,10 +1364,29 @@ function generateDetailedLogTable(logData, strategyType) {
       )
       .join("");
   } else {
-    headers = `<th>Yr</th><th>Start Port.</th><th>W/D Amt</th><th>Inflation</th><th>Port. After W/D</th>
-                       <th>Stock Start</th><th>Stock W/D</th><th>Stock Eff.Ret%</th><th>Stock Growth</th><th>Stock After Growth</th><th>Stock Rebal.</th><th>Stock End</th>
-                       <th>Bond Start</th><th>Bond W/D</th><th>Bond Eff.Ret%</th><th>Bond Growth</th><th>Bond After Growth</th><th>Bond Rebal.</th><th>Bond End</th>
-                       <th>End Port.</th><th>Next Yr W/D Base</th>`;
+    headerTexts = [
+      "Yr",
+      "Start Port.",
+      "W/D Amt",
+      "Inflation",
+      "Port. After W/D",
+      "Stock Start",
+      "Stock W/D",
+      "Stock Eff.Ret%",
+      "Stock Growth",
+      "Stock After Growth",
+      "Stock Rebal.",
+      "Stock End",
+      "Bond Start",
+      "Bond W/D",
+      "Bond Eff.Ret%",
+      "Bond Growth",
+      "Bond After Growth",
+      "Bond Rebal.",
+      "Bond End",
+      "End Port.",
+      "Next Yr W/D Base",
+    ];
     rows = logData
       .map(
         (entry) => `<tr>
@@ -1261,8 +1416,11 @@ function generateDetailedLogTable(logData, strategyType) {
       )
       .join("");
   }
+  const headers = headerTexts.map(createHeader).join("");
   return `<table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
 }
+
+// ⮝⮝⮝ REPLACE THIS ENTIRE BLOCK IN script.js ⮝⮝⮝
 
 function downloadCSV(logData, filename) {
   if (!logData || logData.length === 0) {
