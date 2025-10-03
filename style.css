@@ -272,7 +272,7 @@ td {
 }
 
 
-/* ⮟⮟⮟ ADD THIS BLOCK TO THE END OF style.css ⮟⮟⮟ */
+/* ⮟⮟⮟ REPLACE THIS ENTIRE BLOCK IN style.css ⮟⮟⮟ */
 
 /* ===== [1] TABLE HEADER TOOLTIPS ===== */
 th .tooltip {
@@ -292,11 +292,25 @@ th .tooltip {
   transform: translateY(-1px); /* Minor position adjustment */
 }
 
-/* Position tooltip text above the icon and allow wrapping */
+/* Position tooltip text BELOW the icon and allow wrapping */
 th .tooltip .tooltiptext {
-  bottom: 150%;
+  top: 125%; /* CHANGE: Position below the icon */
+  bottom: auto; /* CHANGE: Unset bottom positioning */
   left: 50%;
   margin-left: -125px; /* Half of width */
   text-align: left;
   white-space: normal;
+  z-index: 10; /* Ensure it's on top of other table content */
+}
+
+/* ADD: Arrow pointing up to the header */
+th .tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  bottom: 100%; /* Position arrow at the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--text-medium) transparent;
 }
